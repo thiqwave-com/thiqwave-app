@@ -1,0 +1,112 @@
+name: CI and Deploy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: thiqwave-app-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Validate deployment scripts
+        run: bash -n infra/*.sh
+
+      - name: Build
+        run: npm run build
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://app.thiqwave.com
+    steps:
+      - name: Configure deployment SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          test -n "$DEPLOY_SSH_KEY" || {
+            echo "::error::DEPLOY_SSH_KEY is not configured."
+            exit 1
+          }
+          test -n "$DEPLOY_KNOWN_HOSTS" || {
+            echo "::error::DEPLOY_KNOWN_HOSTS is not configured."
+            exit 1
+          }
+
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/deploy_key
+          chmod 0644 ~/.ssh/known_hosts
+
+      - name: Deploy commit
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          test -n "$DEPLOY_HOST" || {
+            echo "::error::DEPLOY_HOST secret is not configured."
+            exit 1
+          }
+          test -n "$DEPLOY_USER" || {
+            echo "::error::DEPLOY_USER secret is not configured."
+            exit 1
+          }
+
+          ssh \
+            -i ~/.ssh/deploy_key \
+            -o BatchMode=yes \
+            -o ConnectTimeout=15 \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "deploy $GITHUB_SHA"
+
+      - name: Verify public endpoint
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          resolved_ip="$(getent ahostsv4 app.thiqwave.com 2>/dev/null | awk 'NR == 1 { print $1 }' || true)"
+
+          if [ "$resolved_ip" != "$DEPLOY_HOST" ]; then
+            echo "::warning::app.thiqwave.com does not resolve to the expected deploy host yet; skipping public HTTPS check."
+            exit 0
+          fi
+
+          curl \
+            --fail \
+            --location \
+            --retry 6 \
+            --retry-all-errors \
+            --retry-delay 5 \
+            --max-time 20 \
+            https://app.thiqwave.com/login \
+            >/dev/null

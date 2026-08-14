@@ -1,0 +1,15 @@
+.git
+.github
+.next
+node_modules
+npm-debug.log*
+README.md
+
+# Never let local secrets or tooling state into the build context. The
+# production deploy is protected incidentally (it clean-clones before
+# building), but a local `docker build .` is not.
+.env*
+.lets
+.beads
+.claude
+.worktrees

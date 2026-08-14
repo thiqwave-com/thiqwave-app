@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <polygon id="eu-star" fill="#FFCC00" points="0,-28.4 7.88,-10.84 27.01,-8.78 12.74,4.14 16.69,22.98 0,13.4 -16.69,22.98 -12.74,4.14 -27.01,-8.78 -7.88,-10.84"/>
+  </defs>
+  <circle cx="256" cy="256" r="256" fill="#003399"/>
+  <use href="#eu-star" transform="translate(256,85.33)"/>
+  <use href="#eu-star" transform="translate(341.34,108.2)"/>
+  <use href="#eu-star" transform="translate(403.8,170.66)"/>
+  <use href="#eu-star" transform="translate(426.67,256)"/>
+  <use href="#eu-star" transform="translate(403.8,341.34)"/>
+  <use href="#eu-star" transform="translate(341.34,403.8)"/>
+  <use href="#eu-star" transform="translate(256,426.67)"/>
+  <use href="#eu-star" transform="translate(170.66,403.8)"/>
+  <use href="#eu-star" transform="translate(108.2,341.34)"/>
+  <use href="#eu-star" transform="translate(85.33,256)"/>
+  <use href="#eu-star" transform="translate(108.2,170.66)"/>
+  <use href="#eu-star" transform="translate(170.66,108.2)"/>
+</svg>

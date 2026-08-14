@@ -1,0 +1,214 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Thiqwave Treasury — design system (see docs/heroui-design-system.md §5)
+   Brand palette (cool neutrals + petrol racing-green accent) mapped onto HeroUI
+   v3's CSS-variable token system. Light theme; HeroUI's default component styling
+   (shadows, radii, surfaces) is kept. Overrides are unlayered so they win over
+   HeroUI's @layer theme defaults.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ---- Raw brand scales ------------------------------------------------- */
+  --neutral-50: #f7fbfc;
+  --neutral-100: #f0f5f7;
+  --neutral-200: #e1e9ed;
+  --neutral-300: #cdd8dc;
+  --neutral-400: #adb9be;
+  --neutral-500: #8b989e;
+  --neutral-600: #6b797e;
+  --neutral-700: #4f5b60;
+  --neutral-800: #343f44;
+  --neutral-900: #1d262a;
+  --neutral-950: #0c1417;
+
+  /* Accent · petrol racing green */
+  --accent-50: #eefffa;
+  --accent-100: #defcf3;
+  --accent-200: #c2f5e6;
+  --accent-300: #9fe7d4;
+  --accent-400: #68ccb4;
+  --accent-500: #28ad93;
+  --accent-600: #008c73;
+  --accent-700: #006b56;
+  --accent-800: #004b3b;
+  --accent-900: #002f23;
+  --accent-950: #001a12;
+
+  --success-50: #f5fdf6;
+  --success-100: #eaf9ec;
+  --success-200: #d6f0da;
+  --success-300: #bde1c3;
+  --success-400: #96c49f;
+  --success-500: #71a47b;
+  --success-600: #50845c;
+  --success-700: #376541;
+  --success-800: #22462b;
+  --success-900: #0f2b16;
+  --success-950: #031808;
+
+  --warning-50: #fff9f0;
+  --warning-100: #fef3e1;
+  --warning-200: #f8e5c6;
+  --warning-300: #edd2a5;
+  --warning-400: #d4b175;
+  --warning-500: #b68f49;
+  --warning-600: #946f29;
+  --warning-700: #725211;
+  --warning-800: #513801;
+  --warning-900: #332000;
+  --warning-950: #1e0f00;
+
+  --error-50: #fff7f5;
+  --error-100: #ffeeeb;
+  --error-200: #ffdcd7;
+  --error-300: #ffc5bd;
+  --error-400: #eda096;
+  --error-500: #d27a70;
+  --error-600: #ae5a51;
+  --error-700: #884039;
+  --error-800: #622924;
+  --error-900: #401511;
+  --error-950: #270605;
+
+  --info-50: #f1fcff;
+  --info-100: #e4f8ff;
+  --info-200: #cbeeff;
+  --info-300: #abdefb;
+  --info-400: #7dc1e5;
+  --info-500: #4da0ca;
+  --info-600: #2180aa;
+  --info-700: #006185;
+  --info-800: #004360;
+  --info-900: #00293e;
+  --info-950: #001626;
+
+  /* ---- Brand accent (buttons, links, focus) ---------------------------- */
+  --brand: var(--accent-900); /* main accent; hover → accent-800 */
+
+  /* ---- HeroUI token overrides ----------------------------------------- */
+  /* Surfaces / background / text */
+  --background: var(--neutral-100);
+  --background-secondary: var(--neutral-100);
+  --background-tertiary: var(--neutral-200);
+  --surface: #ffffff;
+  --surface-foreground: var(--neutral-900);
+  --surface-hover: var(--neutral-100);
+  --surface-secondary: var(--neutral-50);
+  --surface-secondary-foreground: var(--neutral-900);
+  --surface-tertiary: var(--neutral-100);
+  --surface-tertiary-foreground: var(--neutral-900);
+  /* Card / surface elevation — the global "golden" shadow (subtle contact lift).
+     Drives every HeroUI Card + Alert via --shadow-surface. */
+  --surface-shadow: 0 1px 3px 0 rgba(24, 24, 27, 0.035);
+  --foreground: var(--neutral-900);
+  --muted: var(--neutral-500);
+  --border: var(--neutral-200);
+  --separator: var(--neutral-200);
+
+  /* Accent */
+  --accent: var(--brand);
+  --accent-foreground: #ffffff;
+  --accent-hover: var(--accent-800);
+  --accent-soft: var(--accent-100);
+  --accent-soft-foreground: var(--accent-800);
+  --accent-soft-hover: var(--accent-200);
+  --focus: var(--brand);
+  --link: var(--accent-700);
+
+  /* Default (neutral chips / controls) */
+  --default: var(--neutral-100);
+  --default-foreground: var(--neutral-900);
+  --default-hover: var(--neutral-200);
+  --default-soft: var(--neutral-200);
+  --default-soft-foreground: var(--neutral-700);
+  --default-soft-hover: var(--neutral-300);
+
+  /* Success */
+  --success: var(--success-700);
+  --success-foreground: #ffffff;
+  --success-soft: var(--success-100);
+  --success-soft-foreground: var(--success-800);
+  --success-soft-hover: var(--success-200);
+
+  /* Warning */
+  --warning: var(--warning-700);
+  --warning-foreground: #ffffff;
+  --warning-soft: var(--warning-100);
+  --warning-soft-foreground: var(--warning-800);
+  --warning-soft-hover: var(--warning-200);
+
+  /* Danger → error palette */
+  --danger: var(--error-700);
+  --danger-foreground: #ffffff;
+  --danger-soft: var(--error-100);
+  --danger-soft-foreground: var(--error-800);
+  --danger-soft-hover: var(--error-200);
+
+  /* Form fields. Inputs/selects use HeroUI's "secondary" (in-surface) variant —
+     a flat, shadowless neutral fill — so they read against white cards. */
+  --field-background: #ffffff;
+  --field-foreground: var(--neutral-900);
+  --field-border: var(--neutral-300);
+  --field-placeholder: var(--neutral-400);
+}
+
+/* Tailwind design tokens: brand + info colour utilities and the UI / mono fonts.
+   The font CSS vars come from next/font in app/layout.tsx. */
+@theme inline {
+  --color-brand: var(--brand);
+  --color-info: var(--info-600);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-funnel-display), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "JetBrains Mono", monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+/* HeroUI Tables (portfolio, transfers, history) share the card "golden"
+   elevation — the Table root carries no shadow of its own by default. */
+.table-root {
+  box-shadow: var(--surface-shadow);
+}
+
+/* Slightly tighter horizontal cell padding so wide data tables (History has 9
+   columns) fit the full width without internal horizontal scrolling. */
+.table__column,
+.table__cell {
+  padding-inline: calc(var(--spacing) * 3);
+}
+
+/* On-page primary fields (e.g. the History table filters) sit on the page
+   background, not inside a card. Scope the field shadow to the golden card
+   shadow and the hover to neutral-50 — only for primary, so the in-surface
+   (secondary) fields and checkbox/radio controls are untouched. */
+.select--primary,
+.input--primary {
+  --field-shadow: var(--surface-shadow);
+  --field-hover: var(--neutral-50);
+}
+
+/* New-row enter animation (latest transfers, dashboard load) */
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-row-in {
+  animation: row-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-row-in {
+    animation: none;
+  }
+}
