@@ -16,7 +16,10 @@ concurrency:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    # Public repo: self-hosted runner only for our own branches, never for fork PRs.
+    # Outside contributors also need maintainer approval before any workflow runs.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, thiqwave-self]
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -43,7 +46,7 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: verify
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, thiqwave-self]
     timeout-minutes: 30
     environment:
       name: production
